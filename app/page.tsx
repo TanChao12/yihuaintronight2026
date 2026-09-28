@@ -1,37 +1,339 @@
-'use client';
-import {useEffect,useRef,useState} from 'react';
-import gsap from 'gsap';
-import {ScrollTrigger} from 'gsap/ScrollTrigger';
-import Lenis from 'lenis';
-import Image from 'next/image';
-gsap.registerPlugin(ScrollTrigger);
-const timeline=[['7:30','报道','REGISTRATION'],['7:45','Opening','OPENING'],['7:50','毅华宿舍村介绍','KPZ INTRODUCTION'],['8:00','25/26 毅华理事会介绍 + 推广 26/27 理事会招募','COUNCIL INTRO + RECRUITMENT'],['8:10','Ice Breaking','ICE BREAKING'],['8:25','游戏环节','GAMES'],['8:50','惩罚环节','PENALTY'],['9:00','Senior 分享','SENIOR SHARING'],['9:10','Q&A Session','Q&A'],['9:20','Closing + 填活动反馈表格','CLOSING + FEEDBACK'],['9:30','大合照','GROUP PHOTO']];
-export default function Home(){
- const root=useRef<HTMLDivElement>(null),cursor=useRef<HTMLDivElement>(null); const [menu,setMenu]=useState(false);
- useEffect(()=>{if(!root.current)return; const lenis=new Lenis({duration:1.15,smoothWheel:true}); let raf=0; const loop=(t:number)=>{lenis.raf(t);raf=requestAnimationFrame(loop)};raf=requestAnimationFrame(loop);
- const ctx=gsap.context(()=>{
-  gsap.timeline({defaults:{ease:'power4.out'}}).from('.loader-mark',{scale:.2,opacity:0,duration:.8}).to('.loader',{autoAlpha:0,duration:.7,delay:.3}).from('.hero-cn',{y:70,opacity:0,duration:.9},'-.25').from('.hero-title-line',{yPercent:120,opacity:0,stagger:.12,duration:1},'-.55').from('.hero-meta',{y:25,opacity:0,duration:.7},'-.55');
-  gsap.to('.hero-glow',{scale:1.25,opacity:.7,duration:4,repeat:-1,yoyo:true,ease:'sine.inOut'});
-  gsap.to('.hero-dragon-art',{yPercent:-8,rotate:2,scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:1.2}});
-  gsap.to('.dragon-orbit',{rotation:360,duration:40,repeat:-1,ease:'none'});
-  gsap.from('.story-word',{y:80,opacity:0,stagger:.14,duration:1,scrollTrigger:{trigger:'.story',start:'top 70%'}});
-  gsap.to('.story-line',{scaleX:1,transformOrigin:'left center',scrollTrigger:{trigger:'.story',start:'top 65%',end:'bottom 55%',scrub:1}});
-  gsap.from('.date-block',{y:70,opacity:0,stagger:.15,duration:.9,scrollTrigger:{trigger:'.event-section',start:'top 70%'}});
-  gsap.to('.timeline-progress',{scaleY:1,transformOrigin:'top center',scrollTrigger:{trigger:'.timeline-wrap',start:'top 60%',end:'bottom 70%',scrub:1}});
-  gsap.utils.toArray<HTMLElement>('.timeline-item').forEach((item)=>gsap.from(item,{x:item.dataset.side==='right'?70:-70,opacity:0,duration:.8,scrollTrigger:{trigger:item,start:'top 82%'}}));
-  gsap.from('.experience-card',{y:70,opacity:0,stagger:.12,duration:.9,scrollTrigger:{trigger:'.experience-grid',start:'top 75%'}});
-  gsap.to('.final-title',{scale:1.06,scrollTrigger:{trigger:'.final-section',start:'top bottom',end:'center center',scrub:1}});
- },root);
- const move=(e:MouseEvent)=>cursor.current&&gsap.to(cursor.current,{x:e.clientX-90,y:e.clientY-90,duration:.45,ease:'power3.out'});window.addEventListener('mousemove',move);
- return()=>{window.removeEventListener('mousemove',move);cancelAnimationFrame(raf);lenis.destroy();ctx.revert()};},[]);
- const go=(id:string)=>{document.getElementById(id)?.scrollIntoView({behavior:'smooth'});setMenu(false)};
- return <main ref={root}><div className="loader"><div className="loader-mark">毅</div></div><div ref={cursor} className="cursor-glow"/>
- <header className="nav"><button className="brand" onClick={()=>go('top')}><span>毅见倾新</span><small>THE BEGINNING OF US</small></button><nav className={menu?'nav-links open':'nav-links'}><button onClick={()=>go('story')}>STORY</button><button onClick={()=>go('event')}>EVENT</button><button onClick={()=>go('journey')}>JOURNEY</button><button onClick={()=>go('join')}>JOIN</button></nav><button className="menu" onClick={()=>setMenu(!menu)}>{menu?'CLOSE':'MENU'}</button></header>
- <section id="top" className="hero section-dark"><div className="hero-noise"/><div className="hero-glow"/><div className="hero-grid"/><div className="cloud cloud-a"/><div className="cloud cloud-b"/><div className="hero-dragon-art"><div className="dragon-orbit"/><div className="dragon-symbol">龙</div></div><div className="hero-content container"><p className="eyebrow hero-cn">毅华新生迎新会 · 2026</p><h1 className="hero-title"><span className="hero-title-line">THE BEGINNING</span><span className="hero-title-line accent">OF US</span></h1><p className="slogan hero-meta">Arrive as Strangers. <span>Rise as One.</span></p><div className="hero-meta hero-details"><span>01 OCT 2026</span><i/><span>GRAND HALL · KPZ</span></div></div><button className="hero-scroll" onClick={()=>go('story')}><span>SCROLL TO ENTER</span><b>↓</b></button></section>
- <section id="story" className="story section-dark"><div className="container story-inner"><p className="eyebrow">THE IDEA</p><div className="story-words"><span className="story-word">STRANGERS.</span><span className="story-word muted">MEET.</span><span className="story-word">CONNECT.</span><span className="story-word gold">ONE.</span></div><div className="story-line"/><div className="story-copy"><div className="hanzi">陌路而来<br/>同心而聚</div><p>来自不同地方的新生，因为相遇而成为「我们」。这不仅是一场迎新会，也是大学新篇章的开始。</p></div></div></section>
- <section id="event" className="event-section section-red"><div className="container event-grid"><div className="event-heading"><p className="eyebrow">THE NIGHT</p><h2>One night.<br/><em>One beginning.</em></h2></div><div className="date-stack"><div className="date-block"><small>DATE</small><strong>01</strong><span>OCTOBER 2026 · THURSDAY</span></div><div className="date-block"><small>TIME</small><strong>7:30—9:30</strong><span>PM</span></div><div className="date-block"><small>VENUE</small><strong>GRAND HALL</strong><span>KOLEJ PENDETA ZA'BA · UKM</span></div></div></div></section>
- <section id="journey" className="timeline-section section-dark"><div className="container"><div className="section-heading"><p className="eyebrow">THE JOURNEY</p><h2>Follow the<br/><span>night.</span></h2></div><div className="timeline-wrap"><div className="timeline-track"><div className="timeline-progress"/></div><div className="timeline-list">{timeline.map(([time,title,en],i)=><article className="timeline-item" data-side={i%2?'right':'left'} key={time+en}><div className="timeline-dot"/><div className="timeline-time">{time}</div><div className="timeline-card"><span>{en}</span><h3>{title}</h3></div></article>)}</div></div></div></section>
- <section className="experience section-dark"><div className="container"><div className="section-heading centered"><p className="eyebrow">WHAT AWAITS</p><h2>Come as a stranger.<br/><span>Leave as one of us.</span></h2></div><div className="experience-grid"><article className="experience-card"><b>01</b><span>ICE BREAKING</span><h3>MEET<br/>YOUR<br/>STRANGERS</h3><i>↗</i></article><article className="experience-card red"><b>02</b><span>GAMES</span><h3>PLAY<br/>TOGETHER</h3><i>↗</i></article><article className="experience-card gold"><b>03</b><span>SENIOR SHARING</span><h3>LISTEN.<br/>LEARN.<br/>BEGIN.</h3><i>↗</i></article></div></div></section>
- <section id="join" className="join-section section-red"><div className="join-pattern"/><div className="container join-inner"><p className="eyebrow">YOUR NEXT CHAPTER</p><h2>READY TO<br/><span>BEGIN?</span></h2><p className="join-copy">Arrive as Strangers.<br/>Rise as One.</p><a className="join-button" href="#register"><span>REGISTER NOW</span><b>↗</b></a><div id="register" className="register-panel"><div className="poster-frame"><Image src="/assets/poster.png" alt="毅见倾新 event poster" fill sizes="(max-width:700px) 78vw,420px"/></div><div><p className="eyebrow">REGISTRATION</p><h3>Scan the poster QR<br/>to join the beginning.</h3><p>Replace this section with your Google Form or registration URL when it is ready.</p></div></div></div></section>
- <section className="final-section section-dark"><div className="final-dragon">龙</div><div className="container final-inner"><p className="eyebrow">01 · 10 · 2026</p><h2 className="final-title">RISE<br/><span>AS ONE.</span></h2><p>毅见倾新 · THE BEGINNING OF US</p><small>KPZ UKM · GRAND HALL</small></div></section><footer className="footer"><span>毅见倾新</span><span>ARRIVE AS STRANGERS. RISE AS ONE.</span><span>2026</span></footer></main>
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+import Lenis from "lenis";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+const schedule = [
+  ["19:30", "报道", "REGISTRATION", "抵达、签到，领取你的新生旅程。"],
+  ["19:45", "开场", "OPENING", "让今晚，从第一束光开始。"],
+  ["19:50", "毅华宿舍村介绍", "KPZ VILLAGE", "认识我们共同生活的地方。"],
+  ["20:00", "25/26 毅华理事会介绍", "COUNCIL / RECRUITMENT", "认识团队，也发现下一段可能。"],
+  ["20:10", "破冰游戏", "ICE BREAKING", "从陌生，到一句话的开始。"],
+  ["20:25", "游戏环节", "PLAY TOGETHER", "把名字变成故事，把故事变成回忆。"],
+  ["20:50", "惩罚环节", "PENALTY", "今晚的笑声，由你决定。"],
+  ["21:00", "Senior 分享", "SENIOR SHARING", "听听已经走过这段路的人。"],
+  ["21:10", "Q&A Session", "QUESTIONS", "把你的疑问，留在今晚。"],
+  ["21:20", "Closing · 活动反馈", "CLOSING", "写下你的第一份新生记忆。"],
+  ["21:30", "大合照", "ONE FRAME", "30 个陌生人，成为一张照片里的我们。"],
+];
+
+const experiences = [
+  { n: "01", cn: "破冰", en: "BREAK THE ICE", copy: "一场游戏，一句自我介绍，一个新的名字。" },
+  { n: "02", cn: "共玩", en: "PLAY AS ONE", copy: "没有观众。今晚，每个人都是故事的一部分。" },
+  { n: "03", cn: "分享", en: "PASS IT ON", copy: "从学长姐的经验里，看见自己的下一步。" },
+];
+
+export default function Home() {
+  const root = useRef<HTMLDivElement>(null);
+  const [menu, setMenu] = useState(false);
+
+  useEffect(() => {
+    const lenis = new Lenis({ duration: 1.15, smoothWheel: true, syncTouch: true });
+    lenis.on("scroll", ScrollTrigger.update);
+    const update = (time: number) => lenis.raf(time * 1000);
+    gsap.ticker.add(update);
+    gsap.ticker.lagSmoothing(0);
+    return () => {
+      gsap.ticker.remove(update);
+      lenis.destroy();
+    };
+  }, []);
+
+  useGSAP(() => {
+    const q = gsap.utils.selector(root);
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (reduce) {
+      q(".reveal").forEach((el) => gsap.set(el, { opacity: 1, y: 0, clipPath: "inset(0 0 0 0)" }));
+      q(".loader").forEach((el) => gsap.set(el, { display: "none" }));
+      return;
+    }
+
+    const loader = q(".loader");
+    const loaderLine = q(".loader-line");
+    const loaderGlyph = q(".loader-glyph");
+    const loaderName = q(".loader-name");
+    const heroWords = q(".hero-word");
+    const heroMeta = q(".hero-meta");
+
+    const intro = gsap.timeline({ defaults: { ease: "power4.out" } });
+    intro.to(loaderLine, { scaleX: 1, duration: 1.25 })
+      .to(loaderGlyph, { opacity: 1, y: 0, duration: 0.8 }, "-=0.55")
+      .to(loaderName, { opacity: 1, y: 0, duration: 0.8 }, "-=0.4")
+      .to(loader, { clipPath: "inset(0 0 100% 0)", duration: 1.15, delay: 0.35, ease: "power4.inOut" })
+      .from(heroWords, { yPercent: 115, opacity: 0, stagger: 0.09, duration: 1.15 }, "-=0.55")
+      .from(heroMeta, { y: 24, opacity: 0, duration: 0.8 }, "-=0.7");
+
+    gsap.to(q(".hero-sigil"), { rotate: 360, duration: 50, repeat: -1, ease: "none" });
+    gsap.to(q(".hero-orbit"), { rotate: -360, duration: 28, repeat: -1, ease: "none" });
+    gsap.to(q(".hero-dragon"), { y: -22, x: 12, duration: 5.5, repeat: -1, yoyo: true, ease: "sine.inOut" });
+
+    gsap.to(q(".hero-poster"), {
+      yPercent: -13,
+      scale: 1.08,
+      rotate: 1.5,
+      scrollTrigger: { trigger: q(".hero"), start: "top top", end: "bottom top", scrub: 1.2 },
+    });
+    gsap.to(q(".hero-title"), {
+      yPercent: 36,
+      opacity: 0.1,
+      scrollTrigger: { trigger: q(".hero"), start: "top top", end: "bottom top", scrub: true },
+    });
+
+    q(".reveal").forEach((el) => {
+      gsap.fromTo(el, { y: 55, opacity: 0, clipPath: "inset(0 0 100% 0)" }, {
+        y: 0, opacity: 1, clipPath: "inset(0 0 0% 0)", duration: 1.05, ease: "power3.out",
+        scrollTrigger: { trigger: el, start: "top 86%", once: true },
+      });
+    });
+
+    q(".story-stage").forEach((stage) => {
+      const lines = stage.querySelectorAll(".story-line");
+      gsap.from(lines, {
+        yPercent: 120,
+        opacity: 0,
+        stagger: 0.13,
+        duration: 1,
+        ease: "power4.out",
+        scrollTrigger: { trigger: stage, start: "top 70%", end: "bottom 35%", toggleActions: "play none none reverse" },
+      });
+    });
+
+    const storyRing = q(".story-ring")[0];
+    if (storyRing) {
+      gsap.to(storyRing, {
+        rotate: 180,
+        scrollTrigger: { trigger: q(".story"), start: "top bottom", end: "bottom top", scrub: 1 },
+      });
+    }
+
+    const dateNumbers = q(".date-number");
+    gsap.from(dateNumbers, {
+      yPercent: 110,
+      stagger: 0.12,
+      duration: 1.15,
+      ease: "power4.out",
+      scrollTrigger: { trigger: q(".date-section"), start: "top 72%", once: true },
+    });
+
+    const timelineItems = q(".timeline-item");
+    timelineItems.forEach((item, i) => {
+      gsap.from(item, {
+        y: 42,
+        opacity: 0,
+        duration: 0.7,
+        delay: i * 0.02,
+        ease: "power3.out",
+        scrollTrigger: { trigger: item, start: "top 88%", once: true },
+      });
+    });
+
+    gsap.to(q(".timeline-progress"), {
+      scaleY: 1,
+      transformOrigin: "top",
+      ease: "none",
+      scrollTrigger: { trigger: q(".timeline"), start: "top 55%", end: "bottom 70%", scrub: true },
+    });
+
+    q(".experience-card").forEach((card) => {
+      const media = card.querySelector(".card-media");
+      card.addEventListener("mouseenter", () => gsap.to(media, { scale: 1.12, duration: 0.7, ease: "power3.out" }));
+      card.addEventListener("mouseleave", () => gsap.to(media, { scale: 1, duration: 0.7, ease: "power3.out" }));
+    });
+
+    gsap.to(q(".marquee-track"), { xPercent: -35, ease: "none", scrollTrigger: { trigger: q(".marquee"), start: "top bottom", end: "bottom top", scrub: 1 } });
+
+    gsap.to(q(".final-dragon"), {
+      yPercent: -18,
+      rotate: -4,
+      scrollTrigger: { trigger: q(".final"), start: "top bottom", end: "bottom top", scrub: 1.3 },
+    });
+
+    const cursor = q(".cursor")[0];
+    const cursorDot = q(".cursor-dot")[0];
+    if (cursor && cursorDot && window.matchMedia("(pointer:fine)").matches) {
+      const xTo = gsap.quickTo(cursor, "x", { duration: 0.35, ease: "power3" });
+      const yTo = gsap.quickTo(cursor, "y", { duration: 0.35, ease: "power3" });
+      const xd = gsap.quickTo(cursorDot, "x", { duration: 0.08 });
+      const yd = gsap.quickTo(cursorDot, "y", { duration: 0.08 });
+      const move = (e: MouseEvent) => { xTo(e.clientX); yTo(e.clientY); xd(e.clientX); yd(e.clientY); };
+      window.addEventListener("mousemove", move);
+      q("a, button, .experience-card").forEach((el) => {
+        el.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 2.4, opacity: 0.9, duration: 0.3 }));
+        el.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 1, opacity: 0.6, duration: 0.3 }));
+      });
+      return () => window.removeEventListener("mousemove", move);
+    }
+  }, { scope: root });
+
+  const jump = (id: string) => {
+    setMenu(false);
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  return (
+    <main ref={root} className="site-shell">
+      <div className="cursor" aria-hidden="true"><span /></div>
+      <div className="cursor-dot" aria-hidden="true" />
+
+      <div className="loader" aria-hidden="true">
+        <div className="loader-top"><span>KPZ · UKM</span><span>2026</span></div>
+        <div className="loader-center">
+          <div className="loader-glyph">毅</div>
+          <div className="loader-name">毅见倾新</div>
+          <div className="loader-sub">THE BEGINNING OF US</div>
+        </div>
+        <div className="loader-bottom"><span>ARRIVE AS STRANGERS</span><span>01 / 10 / 2026</span></div>
+        <div className="loader-bar"><i className="loader-line" /></div>
+      </div>
+
+      <header className={`nav ${menu ? "is-open" : ""}`}>
+        <button className="brand" onClick={() => jump("top")} aria-label="回到首页">
+          <span className="brand-mark">毅</span>
+          <span><b>毅见倾新</b><small>THE BEGINNING OF US</small></span>
+        </button>
+        <nav className="nav-links">
+          <button onClick={() => jump("story")}>故事</button>
+          <button onClick={() => jump("night")}>时间</button>
+          <button onClick={() => jump("journey")}>流程</button>
+          <button onClick={() => jump("register")}>报名</button>
+        </nav>
+        <button className="menu-btn" onClick={() => setMenu(!menu)} aria-label="打开菜单"><span /><span /></button>
+      </header>
+
+      {menu && <div className="mobile-menu">
+        {[['story','故事'],['night','时间'],['journey','流程'],['register','报名']].map(([id, label]) => <button key={id} onClick={() => jump(id)}>{label}<span>↗</span></button>)}
+      </div>}
+
+      <section id="top" className="hero section-dark">
+        <div className="hero-noise" />
+        <div className="hero-grid" />
+        <div className="hero-poster-wrap">
+          <img className="hero-poster" src="/poster.png" alt="毅见倾新活动海报" />
+        </div>
+        <div className="hero-vignette" />
+        <div className="hero-sigil"><span>毅</span></div>
+        <div className="hero-orbit"><span>KPZ · 新生迎新会 · UKM · 2026 · </span></div>
+        <div className="hero-dragon">龍</div>
+        <div className="hero-content">
+          <p className="eyebrow hero-meta"><span>01</span> 新生迎新会 <i /> KOLEJ PENDETA ZA&apos;BA</p>
+          <h1 className="hero-title" aria-label="毅见倾新 The Beginning of Us">
+            <span className="hero-word cn">毅见</span>
+            <span className="hero-word cn second">倾新</span>
+            <span className="hero-word en">THE BEGINNING <em>OF</em> US</span>
+          </h1>
+          <div className="hero-bottom hero-meta">
+            <p>陌路而来，同心而聚。<br /><b>Arrive as Strangers. Rise as One.</b></p>
+            <button className="scroll-cue" onClick={() => jump("story")}><span>SCROLL TO BEGIN</span><i>↓</i></button>
+          </div>
+        </div>
+      </section>
+
+      <section id="story" className="story section-light">
+        <div className="section-index">01 / THE IDEA</div>
+        <div className="story-ring"><span>STRANGERS · MEET · CONNECT · RISE · </span></div>
+        <div className="story-stage">
+          <p className="eyebrow reveal">为什么是「我们」</p>
+          <div className="story-lines">
+            <div className="story-line">来自不同地方</div>
+            <div className="story-line serif">因为相遇</div>
+            <div className="story-line accent">成为我们。</div>
+          </div>
+          <p className="story-copy reveal">大学的第一章，不从熟悉开始。<br />它从一个陌生的名字、一场相遇、一次一起大笑开始。</p>
+        </div>
+        <div className="story-aside reveal"><span>01</span><p>NEW PEOPLE<br />NEW PLACE<br />NEW CHAPTER</p></div>
+      </section>
+
+      <section id="night" className="date-section section-dark">
+        <div className="section-index">02 / THE NIGHT</div>
+        <div className="date-orb" />
+        <div className="date-layout">
+          <div className="date-label reveal"><span>WHEN</span><i /> 星期四</div>
+          <div className="date-display">
+            <div className="date-row"><span className="date-number">01</span><span className="date-word">OCT</span></div>
+            <div className="date-row"><span className="date-number">2026</span></div>
+          </div>
+          <div className="date-details reveal">
+            <div><small>TIME</small><strong>7:30 — 9:30 PM</strong></div>
+            <div><small>PLACE</small><strong>GRAND HALL, KPZ</strong><span>KOLEJ PENDETA ZA&apos;BA · UKM</span></div>
+            <div><small>PEOPLE</small><strong>30 新生</strong></div>
+          </div>
+        </div>
+        <div className="date-bottom"><span>01.10.26</span><span>THE BEGINNING OF US</span><span>KPZ / UKM</span></div>
+      </section>
+
+      <section id="journey" className="timeline section-light">
+        <div className="section-index">03 / THE JOURNEY</div>
+        <div className="timeline-head">
+          <p className="eyebrow reveal">今晚，我们一起走过</p>
+          <h2 className="display reveal">一晚，<br /><span>十一幕。</span></h2>
+          <p className="lead reveal">从签到到合照，每一个时间点都只是一个新的相遇。</p>
+        </div>
+        <div className="timeline-wrap">
+          <div className="timeline-rail"><i className="timeline-progress" /></div>
+          <div className="timeline-list">
+            {schedule.map(([time, cn, en, copy]) => (
+              <article className="timeline-item" key={time}>
+                <div className="timeline-time">{time}</div>
+                <div className="timeline-dot" />
+                <div className="timeline-main"><h3>{cn}</h3><span>{en}</span><p>{copy}</p></div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="experiences section-dark">
+        <div className="section-index">04 / EXPERIENCE</div>
+        <div className="experience-head"><p className="eyebrow reveal">不是旁观，是参与。</p><h2 className="display reveal">今晚，<br /><span>一起发生。</span></h2></div>
+        <div className="experience-grid">
+          {experiences.map((x) => (
+            <article className="experience-card" key={x.n}>
+              <div className="card-media"><div className="card-glow" /><div className="card-glyph">{x.n}</div></div>
+              <div className="card-body"><small>{x.n}</small><h3>{x.cn}</h3><span>{x.en}</span><p>{x.copy}</p><b>EXPLORE ↗</b></div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="marquee section-red" aria-hidden="true">
+        <div className="marquee-track"><span>陌路而来</span><i>✦</i><span>同心而聚</span><i>✦</i><span>RISE AS ONE</span><i>✦</i><span>毅见倾新</span><i>✦</i><span>THE BEGINNING OF US</span></div>
+      </section>
+
+      <section id="register" className="register section-light">
+        <div className="section-index">05 / JOIN US</div>
+        <div className="register-bg"><img src="/poster.png" alt="" /></div>
+        <div className="register-overlay" />
+        <div className="register-content">
+          <p className="eyebrow reveal">准备好了吗？</p>
+          <h2 className="register-title reveal">来到这里，<br /><span>成为「我们」。</span></h2>
+          <p className="register-copy reveal">报名参加《毅见倾新 · The Beginning of Us》<br />01 / 10 / 2026 · Grand Hall, KPZ</p>
+          <a className="register-btn reveal" href="#register-form"><span>立即报名</span><i>↗</i></a>
+          <div id="register-form" className="qr-card reveal"><img className="qr-image" src="/qr.png" alt="活动报名二维码" /><div><small>REGISTRATION</small><strong>扫描二维码<br />填写报名表格</strong></div></div>
+        </div>
+      </section>
+
+      <section className="final section-dark">
+        <div className="final-noise" />
+        <div className="final-dragon">龍</div>
+        <div className="final-content">
+          <span className="final-small">01 · 10 · 2026 / GRAND HALL KPZ</span>
+          <h2><span>陌路而来。</span><span>同心而聚。</span></h2>
+          <div className="final-rule" />
+          <p>ARRIVE AS STRANGERS.<br /><b>RISE AS ONE.</b></p>
+          <div className="final-mark">毅</div>
+          <span className="final-end">THE BEGINNING OF US</span>
+        </div>
+      </section>
+
+      <footer className="footer">
+        <span>毅见倾新 · 2026</span><span>KPZ · UKM</span><span>MADE FOR A NEW BEGINNING</span>
+      </footer>
+    </main>
+  );
 }
